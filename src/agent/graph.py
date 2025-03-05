@@ -15,6 +15,8 @@ import uuid
 
 mini = ChatOpenAI(model="gpt-4o-mini")
 full = ChatOpenAI(model="gpt-4o")
+embeddings = OpenAIEmbeddings()
+vector_store = FAISS.load_local("./src/agent/local_faiss_index", embeddings, allow_dangerous_deserialization=True)
 
 models = {
     "mini": mini,
@@ -107,8 +109,6 @@ def query_generator(state: State, config: RunnableConfig):
     return {"queries": response['parsed'].queries, "messages": query_messages + [response['raw']]}
 
 def retrieval_node(state: State):
-    embeddings = OpenAIEmbeddings()
-    vector_store = FAISS.load_local("./src/agent/local_faiss_index", embeddings, allow_dangerous_deserialization=True)
     context = ""
     for query in state['queries']:
         retrieved_docs = vector_store.similarity_search(query, k=2)
@@ -151,9 +151,9 @@ def generate_answer(state: State, config: RunnableConfig):
     model_name = config["configurable"].get("model", "mini")
     model = models[model_name]
     if state['messages'][-1].type == "tool":
-        generate_messages = [HumanMessage(content=f"Please use the retrieved context to answer the question. <context>{state['context']}</context>\n\n<question>{state['question']}</question>. Here is some feedback on a previous generation: {state['messages'][-1].content}")]
+        generate_messages = [HumanMessage(content=f"Please use the retrieved context to answer the question. <context>{state['context']}</context>\n\n<question>{state['question']}</question>. Here is some feedback on a previous generation: {state['messages'][-1].content}. Keep your answer concise.")]
     else:
-        generate_messages = [HumanMessage(content=f"Please use the retrieved context to answer the question. <context>{state['context']}</context>\n\n<question>{state['question']}</question>")]
+        generate_messages = [HumanMessage(content=f"Please use the retrieved context to answer the question. <context>{state['context']}</context>\n\n<question>{state['question']}</question>. Keep your answer concise.")]
     
     response = model.invoke(generate_messages)
     return {"messages": generate_messages + [response]}
