@@ -28,7 +28,7 @@ jobs:
         uv pip install pytest
         
     - name: Install the project
-        run: uv sync --all-extras --dev
+      run: uv sync --all-extras --dev
         
     - name: Run integration tests
       run: |
