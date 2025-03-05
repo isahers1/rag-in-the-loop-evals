@@ -29,3 +29,5 @@ jobs:
     - name: Run integration tests
       run: |
         uv run pytest tests/integration_tests -v
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
