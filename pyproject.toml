@@ -13,7 +13,7 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "langchain_openai>=0.3.7",
     "langchain_community>=0.3.19",
-    "openevals>=0.0.3",
+    "openevals>=0.0.4",
     "faiss-cpu>=1.10.0",
     "langsmith>=0.3.11"
 ]
