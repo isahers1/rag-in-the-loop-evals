@@ -101,7 +101,7 @@ def query_generator(state: State, config: RunnableConfig):
     model_name = config["configurable"].get("model", "mini")
     model = models[model_name]
     query_llm = model.with_structured_output(SearchQueries, include_raw=True)
-    if len(state['messages']) > 0 and state['messages'][-1].role == "tool":
+    if len(state['messages']) > 0 and state['messages'][-1].type == "tool":
         query_messages = [HumanMessage(content=f"Please generate search queries for {state['question']}. Remember last time you generated the following queries: {state['queries']}, which resulted in the following feedback: {state['messages'][-1].content}")]
     else:
         query_messages = [HumanMessage(content=f"Please generate search queries for {state['question']}")]
